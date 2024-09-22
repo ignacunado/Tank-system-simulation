@@ -1,18 +1,10 @@
 """
         Calcula la salida de un controlador PID (Proporcional, Integral, Derivativo).
 
-    Args:
-        man_auto (bool): Modo manual (True) o automático (False).
-        sp_auto (bool): Ignorado si man_auto es True. Modo manual de setpoint (True) o automático (False).
-        sp_man (float): El valor del setpoint en modo automático.
-
-    Returns:
-        None
-
-    El método calcula la salida del controlador PID utilizando el valor actual (measured_variable) y el setpoint (sp_man).
-    Se almacena el histórico de velocidades en self.record y se limita a 100 elementos.
+    El método calcula la salida del controlador PID utilizando el valor actual y el setpoint.
+    Se almacena el histórico de velocidades en self.record y se limita a 500 elementos.
     Se calculan los componentes P, I y D del controlador y se suman para obtener la salida.
-    La salida se limita al rango de 0 a 100.
+    La salida se limita al rango de 0 a 100 (%).
 """
 
 class Control_valve():
@@ -42,13 +34,10 @@ class Control_valve():
 
             self.error_accuracy = [(self.sp_auto - elem) for elem in self.record[-100:]]
                 
-            #kp = 10.0
             aP = self.error * self.kp    # Acción proporcional
 
-            #ki = 0.0001
             aI = (self.kp * (sum(self.error_accuracy) / (len(self.error_accuracy)*0.002) * self.ki))    # Acción integral
         
-            #kd = 0.01
             if len(self.record) > 2:    # Acción derivativa
                 aD = (self.error_accuracy[-1]-self.error_accuracy[-2])*self.kd*self.kp
             else:
